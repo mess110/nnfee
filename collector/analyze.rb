@@ -7,8 +7,9 @@ require './src/BTC'
 require './src/utils'
 require './src/dumb'
 require './src/mempool'
-dumb_validate
 
+$dumb_db = DumbDB.new
+$mempool = Mempool.new
 
 def transaction_stats tx
   tx.delete_if { |k,v| !%w(txid hash time first_seen double_spend size vsize input_amount_int output_amount_int fee_int).include?(k) }
@@ -23,23 +24,22 @@ def block_stats b
 end
 
 output = []
-mempool = read_mempool('dumb_db/3m.json')
 
-all_blocks = dumb_blocks.reverse.take(5)
+all_blocks = $dumb_db.dumb_blocks.reverse.take(5)
 
 while !all_blocks.empty?
   newest_block_id = all_blocks.pop
   puts newest_block_id
-  block = block_stats dumb_read newest_block_id
+  block = block_stats $dumb_db.dumb_read newest_block_id
 
   # flatten the data
   block['transactions'].each do |e|
-    closest = closest_mempool(e['first_seen'], mempool)
+    closest = $mempool.closest_mempool(e['first_seen'])
 
     fee_per_byte = e['fee_int'].to_f / e['size'].to_f
     tx_size = e['size']
-    mempool_size = mempool[closest][:count]
-    mempool_bytes = mempool[closest][:size].to_f / 1024.to_f / 1024.to_f
+    mempool_size = $mempool.mempool[closest][:count]
+    mempool_bytes = $mempool.mempool[closest][:size].to_f / 1024.to_f / 1024.to_f
     confirmation_time =  (Time.at(block['first_seen']) - Time.at(e['first_seen']))
 
     output.push({
