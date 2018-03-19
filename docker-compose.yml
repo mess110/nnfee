@@ -1,0 +1,20 @@
+version: '3'
+services:
+  collector:
+    build: collector/
+    command: ruby collect.rb fetch
+    environment:
+      - ASD=asd
+    volumes:
+      - ./collector:/myapp
+  estimator:
+    build: estimator/
+    command: python --version
+    environment:
+      - ASD=asd
+    volumes:
+      - ./estimator:/myapp
+    # ports:
+      # - "3000:8080"
+    depends_on:
+      - collector

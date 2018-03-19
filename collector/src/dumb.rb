@@ -33,6 +33,8 @@ end
 
 def dumb_oldest_block_index
   Dir["#{dumb_data_path}/*.gz"].sort.first.split('/').last.split('.').first.to_i
+rescue
+  nil
 end
 
 def dumb_fetch_chain block_index = 514132
