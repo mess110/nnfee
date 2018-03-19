@@ -19,4 +19,4 @@ Once you have enough blocks, run `analyze.rb` to generate `out.csv`:
 ```
 
 Once you have the `out.csv` file, split it in training/test data and use it
-in the [estimator](/estimator/README.md).
+in the [estimator](/estimator/).
