@@ -3,18 +3,25 @@ services:
   collector:
     build: collector/
     command: ruby collect.rb blocks
-    environment:
-      - ASD=asd
     volumes:
       - ./collector:/myapp
+
   estimator:
     build: estimator/
     command: python --version
-    environment:
-      - ASD=asd
     volumes:
       - ./estimator:/myapp
-    # ports:
-      # - "3000:8080"
     depends_on:
       - collector
+  api:
+    build: api/
+    command: flask run
+    environment:
+      - FLASK_APP=app.py
+    ports:
+      - "3000:5000"
+    volumes:
+      - ./api:/myapp
+      - ./estimator:/estimator
+    depends_on:
+      - estimator
