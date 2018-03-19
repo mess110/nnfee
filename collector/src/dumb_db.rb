@@ -4,7 +4,7 @@ class DumbDB
   attr_accessor :dumb_path, :dumb_data_path, :dumb_index_path
 
   def initialize
-    @dumb_path = 'dumb_db2'
+    @dumb_path = 'dumb_db'
     @dumb_data_path = File.join(@dumb_path, 'data')
     @dumb_index_path = File.join(@dumb_path, 'index')
     dumb_validate
