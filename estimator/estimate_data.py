@@ -1,19 +1,31 @@
 import pandas as pd
 import tensorflow as tf
 
-def load_data():
-    """Returns the iris dataset as (train_x, train_y), (test_x, test_y)."""
-    train_path = 'csv/fee_training.csv'
-    test_path = 'csv/fee_test.csv'
 
-    train = pd.read_csv(train_path)
-    y_name = list(train.columns.values).pop()
-    train_x, train_y = train, train.pop(y_name)
+def load_data(test=True):
+    """Returns the iris dataset as train_x, train_y"""
+    csv_path = 'csv/fee_test.csv' if test is True else 'csv/fee_training.csv'
+    csv = pd.read_csv(csv_path)
+    y_name = list(csv.columns.values).pop()
+    csv_x, csv_y = csv, csv.pop(y_name)
+    return csv_x, csv_y
 
-    test = pd.read_csv(test_path)
-    test_x, test_y = test, test.pop(y_name)
 
-    return (train_x, train_y), (test_x, test_y)
+def load_test_data():
+    return load_data(True)
+
+
+def load_training_data():
+    return load_data(False)
+
+
+def load_train_keys():
+    """Reads the headers of the csv_file"""
+    path = 'csv/fee_test.csv'
+    csv = pd.read_csv(path, nrows=1)
+    y_name = list(csv.columns.values).pop()
+    csv.pop(y_name)
+    return csv.keys()
 
 
 def train_input_fn(features, labels, batch_size):

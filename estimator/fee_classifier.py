@@ -6,15 +6,14 @@ import estimate_data
 import tensorflow as tf
 
 class FeeClassifier:
+
     def __init__(self, batch_size, train_steps):
         self.batch_size = batch_size
         self.train_steps = train_steps
         self.feature_column_names = []
 
-        (train_x, train_y), (test_x, test_y) = estimate_data.load_data()
-
         my_feature_columns = []
-        for key in train_x.keys():
+        for key in estimate_data.load_train_keys():
             feature_column = tf.feature_column.numeric_column(key=key)
             my_feature_columns.append(feature_column)
             self.feature_column_names.append(feature_column.name)
@@ -28,16 +27,18 @@ class FeeClassifier:
             n_classes=3,
             model_dir='models/')
 
+
     def train(self):
-        (train_x, train_y), (test_x, test_y) = estimate_data.load_data()
+        train_x, train_y = estimate_data.load_training_data()
 
         # Train the Model.
         self.classifier.train(
             input_fn=lambda:estimate_data.train_input_fn(train_x, train_y, self.batch_size),
             steps=self.train_steps)
 
+
     def evaluate(self):
-        (train_x, train_y), (test_x, test_y) = estimate_data.load_data()
+        test_x, test_y = estimate_data.load_test_data()
 
         # Evaluate the model.
         eval_result = self.classifier.evaluate(
@@ -45,6 +46,7 @@ class FeeClassifier:
                                                     self.batch_size))
 
         print('Test set accuracy: {accuracy:0.3f}\n'.format(**eval_result))
+
 
     def predict(self, predict, expected):
         predict_x = {}
