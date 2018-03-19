@@ -6,10 +6,12 @@ class Mempool
     mempool_3m = 'dumb_db/3m.json'
 
     unless File.exists?(mempool_3m_js)
+      puts 'Downloading mempool'
       `curl https://dedi.jochen-hoenicke.de/queue/3m.js > #{mempool_3m_js}`
     end
 
     unless File.exists?(mempool_3m)
+      puts 'Saving mempool'
       lines = File.read(mempool_3m_js).split("\n")
       lines.pop
       lines.reverse!
@@ -19,14 +21,8 @@ class Mempool
       File.write(mempool_3m, json.to_json)
     end
 
-    json = read_mempool(mempool_3m)
+    json = _read_mempool(mempool_3m)
     @mempool = json
-  end
-
-  def read_mempool path
-    JSON.parse(File.read(path))
-      .collect { |e| { e[0] => { time: e[0], count: e[1].inject(:+), pending_fee: e[2].inject(:+), size: e[3].inject(:+) } } }
-      .reduce Hash.new, :merge
   end
 
   # Example usage:
@@ -37,5 +33,13 @@ class Mempool
       .keys
       .sort_by { |date| (Time.at(date).to_i - Time.at(needed).to_i).abs }
       .first
+  end
+
+  private
+
+  def _read_mempool path
+    JSON.parse(File.read(path))
+      .collect { |e| { e[0] => { time: e[0], count: e[1].inject(:+), pending_fee: e[2].inject(:+), size: e[3].inject(:+) } } }
+      .reduce Hash.new, :merge
   end
 end

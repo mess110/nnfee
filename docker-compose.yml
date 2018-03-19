@@ -2,7 +2,7 @@ version: '3'
 services:
   collector:
     build: collector/
-    command: ruby collect.rb fetch
+    command: ruby collect.rb blocks
     environment:
       - ASD=asd
     volumes:

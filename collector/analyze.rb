@@ -5,27 +5,17 @@ require 'json'
 
 require './src/BTC'
 require './src/utils'
-require './src/dumb'
+require './src/dumb_db'
 require './src/mempool'
 
 $dumb_db = DumbDB.new
 $mempool = Mempool.new
 
-def transaction_stats tx
-  tx.delete_if { |k,v| !%w(txid hash time first_seen double_spend size vsize input_amount_int output_amount_int fee_int).include?(k) }
-end
-
-def block_stats b
-  b['transactions']
-    .collect { |tx| transaction_stats(tx) }
-    .select { |tx| tx['double_spend'] == false }
-
-  b.delete_if { |k,v| !%w(height hash size stripped_size time first_seen difficulty input_count output_count input_amount_int output_amount_int fees_int transaction_count transactions).include?(k) }
-end
-
 output = []
 
 all_blocks = $dumb_db.dumb_blocks.reverse.take(5)
+
+puts "Analyzing #{all_blocks.size} blocks."
 
 while !all_blocks.empty?
   newest_block_id = all_blocks.pop

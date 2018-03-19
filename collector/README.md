@@ -7,7 +7,7 @@ Requires ruby 2.4.3, no gem dependencies.
 ## commands
 
 ```
-./collect.rb fetch
+./collect.rb blocks
 ```
 
 Starts gathering blocks and saves them in the disk 'db'.

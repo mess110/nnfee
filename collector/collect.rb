@@ -5,7 +5,7 @@ require 'json'
 
 require './src/BTC'
 require './src/utils'
-require './src/dumb'
+require './src/dumb_db'
 require './src/mempool'
 
 $dumb_db = DumbDB.new
@@ -14,16 +14,21 @@ $dumb_db = DumbDB.new
 
 # block_index = $btc.getblockcount
 
+help = 'Valid commands: blocks, mempool, missing_blocks, stats'
+
 if ARGV.size != 1
-  puts 'Valid commands: fetch, missing, fetch_missing, stats'
+  puts help
   exit 1
 end
 
 case ARGV[0]
-when 'fetch'
+when 'blocks'
   block_index = $dumb_db.dumb_oldest_block_index
   $dumb_db.dumb_fetch_chain block_index
-when 'missing'
+when 'mempool'
+  $mempool = Mempool.new
+  puts 'Done'
+when 'missing_blocks'
   blockz = $dumb_db.dumb_blocks
   if blockz.empty?
     puts 'You have no blocks'
@@ -38,6 +43,7 @@ when 'missing'
   end
 when 'stats'
   # do nothing
+  puts 'Done'
 else
-  puts 'Valid commands: fetch, missing, stats'
+  puts help
 end

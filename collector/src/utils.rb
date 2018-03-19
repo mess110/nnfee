@@ -30,3 +30,14 @@ def block_api block_index
 
   original
 end
+
+def block_stats b
+  transaction_keys = %w(txid hash time first_seen double_spend size vsize input_amount_int output_amount_int fee_int)
+  block_keys = %w(height hash size stripped_size time first_seen difficulty input_count output_count input_amount_int output_amount_int fees_int transaction_count transactions)
+
+  b['transactions']
+    .collect { |tx| tx.delete_if { |k,v| !transaction_keys.include?(k) } }
+    .select { |tx| tx['double_spend'] == false }
+
+  b.delete_if { |k,v| !block_keys.include?(k) }
+end
