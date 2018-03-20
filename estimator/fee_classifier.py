@@ -6,6 +6,7 @@ import estimate_data
 import tensorflow as tf
 
 class FeeClassifier:
+    MODELS_DIR = 'models/'
 
     def __init__(self, batch_size, train_steps):
         self.batch_size = batch_size
@@ -18,6 +19,8 @@ class FeeClassifier:
             my_feature_columns.append(feature_column)
             self.feature_column_names.append(feature_column.name)
 
+        print(FeeClassifier.MODELS_DIR)
+
         # Build 2 hidden layer DNN with 10, 10 units respectively.
         self.classifier = tf.estimator.DNNClassifier(
             feature_columns=my_feature_columns,
@@ -25,7 +28,7 @@ class FeeClassifier:
             hidden_units=[10, 10],
             # The model must choose between 3 classes.
             n_classes=8,
-            model_dir='models/')
+            model_dir=FeeClassifier.MODELS_DIR)
 
 
     def train(self):

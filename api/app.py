@@ -5,6 +5,6 @@ app = Flask(__name__)
 def root():
     return app.send_static_file('index.html')
 
-@app.route("/guestimate")
+@app.route("/nn")
 def hello():
     return "Hello World!"

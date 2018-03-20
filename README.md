@@ -27,13 +27,25 @@ docker-compose up --build
 
 // train the NN
 
-./guestimate --train'
+./nn --train'
 
 
 // make prediction. the first element in the array is the fee per byte the other
 // is the current mempool size
 
-./guestimate --predict '[2.63,9.66]'
+./nn --predict '[2.63,9.66]'
+```
+
+## helper commands
+
+```
+// evaluates the model, is automatically run after training
+
+./nn --evaluate
+
+// deletes the model to start fresh
+
+./nn --clean
 ```
 
 
