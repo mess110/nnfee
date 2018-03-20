@@ -10,13 +10,11 @@ Requires ruby 2.4.3, no gem dependencies.
 ./collect.rb blocks
 ```
 
-Starts gathering blocks and saves them in the disk 'db'.
+Starts gathering blocks and saves them locally.
 
-Once you have enough blocks, run `analyze.rb` to generate `out.csv`:
+Once you have enough blocks, run `prepare.rb` to generate the training and
+test CSVs.
 
 ```
-./analyze.rb
+./prepare.rb
 ```
-
-Once you have the `out.csv` file, split it in training/test data and use it
-in the [estimator](/estimator/).

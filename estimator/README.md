@@ -18,7 +18,7 @@ your model.
 To train it:
 
 ```
-python main.py --train
+python main.py --train true
 ```
 
 To predict using the model:

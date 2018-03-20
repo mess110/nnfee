@@ -11,7 +11,7 @@ $mempool = Mempool.new
 all_blocks = $dumb_db.all_local_blocks.reverse.take(50)
 # all_blocks = $dumb_db.all_local_blocks.each_slice(5).map(&:last)
 
-puts "Analyzing #{all_blocks.size} blocks."
+puts "Preparing from #{all_blocks.size} blocks."
 
 output = []
 while !all_blocks.empty?

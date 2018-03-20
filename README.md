@@ -14,17 +14,26 @@ Easiest way to run this is with docker:
 
 ```shell
 // start collecting blocks
+
 docker-compose up --build
 
+
 // once you have blocks you can prepare for training
-// this will create training/testing files
+// this will create training/testing files and move them in the
+// correct directory
+
+
 ./prepare
 
+
 // train the NN
+
 ./guestimate --train true'
+
 
 // make prediction. the first element in the array is the fee per byte the other
 // is the current mempool size
+
 ./guestimate --predict '[2.63,9.66]'
 ```
 
