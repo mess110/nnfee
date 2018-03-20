@@ -21,7 +21,7 @@ class DumbDB
     # end
   end
 
-  def dumb_blocks
+  def all_local_blocks
     Dir["#{dumb_data_path}/*gz"].collect { |e| e.split('/').last.split('.').first.to_i }.sort
   end
 

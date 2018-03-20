@@ -4,6 +4,7 @@ Attempt to estimate bitcoin fees with neural networks
 
 ## components
 
+* [api](api/) - web api for predictions
 * [collector](collector/) - prepares data for training/testing
 * [estimator](estimator/) - trains/tests
 

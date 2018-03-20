@@ -13,13 +13,14 @@ $mempool = Mempool.new
 
 output = []
 
-all_blocks = $dumb_db.dumb_blocks.reverse.take(5)
+# all_blocks = $dumb_db.all_local_blocks
+# all_blocks = $dumb_db.all_local_blocks.reverse.take(50)
+all_blocks = $dumb_db.all_local_blocks.each_slice(5).map(&:last)
 
 puts "Analyzing #{all_blocks.size} blocks."
 
 while !all_blocks.empty?
   newest_block_id = all_blocks.pop
-  puts newest_block_id
   block = block_stats $dumb_db.dumb_read newest_block_id
 
   # flatten the data
@@ -52,27 +53,25 @@ output.each do |e|
   end
 end
 
+target_elements = 8
+element_size = max_time / target_elements
 output.each do |e|
-  conf = e[:confirmation_time]
-  if conf > max_time / 3 * 2
-    e[:confirmation_time] = 2
-  elsif conf > max_time / 3
-    e[:confirmation_time] = 1
-  else
-    e[:confirmation_time] = 0
+  aux = 1
+  while aux * element_size < e[:confirmation_time] do
+    aux += 1
   end
+  e[:confirmation_time_scaled] = aux - 1
 end
 
 new_output = []
-new_output.concat(output.select { |e| e if e[:confirmation_time] == 0 }.take(1000))
-new_output.concat(output.select { |e| e if e[:confirmation_time] == 1 }.take(1000))
-new_output.concat(output.select { |e| e if e[:confirmation_time] == 2 }.take(1000))
-
+(target_elements - 1).downto(0) do |i|
+  new_output.concat(output.select { |e| e if e[:confirmation_time_scaled] == i }.take(500))
+end
 output = new_output
 
 output_file = 'out.csv'
 # keys = %i(fee_per_byte tx_size mempool_size mempool_bytes confirmation_time)
-keys = %i(fee_per_byte mempool_bytes confirmation_time)
+keys = %i(fee_per_byte mempool_bytes confirmation_time_scaled)
 
 File.open(output_file, 'w') do |f|
   f.write(keys.join(',') + "\n")
@@ -82,3 +81,6 @@ File.open(output_file, 'w') do |f|
 end
 
 puts `head #{output_file}`
+
+a = File.read(output_file).lines.collect { |l| l.split(',').last.strip }.sort
+p Hash[a.group_by {|x| x}.map {|k,v| [k,v.count]}]

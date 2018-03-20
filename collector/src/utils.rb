@@ -5,7 +5,7 @@ end
 
 def block_api block_index
   all = []
-  next_page = "https://api.smartbit.com.au/v1/blockchain/block/#{block_index}?limit=100"
+  next_page = "https://api.smartbit.com.au/v1/blockchain/block/#{block_index}?limit=1000"
   loop do
     break if next_page.nil?
     puts "Req #{next_page}"

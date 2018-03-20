@@ -29,7 +29,7 @@ when 'mempool'
   $mempool = Mempool.new
   puts 'Done'
 when 'missing_blocks'
-  blockz = $dumb_db.dumb_blocks
+  blockz = $dumb_db.all_local_blocks
   if blockz.empty?
     puts 'You have no blocks'
   else
