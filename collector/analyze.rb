@@ -1,12 +1,14 @@
 #!/usr/bin/env ruby
 
+# Reads blocks stored locally and creates an output file for trainig
+
 require './src/all'
 
 $dumb_db = DumbDB.new
 $mempool = Mempool.new
 
 # all_blocks = $dumb_db.all_local_blocks
-all_blocks = $dumb_db.all_local_blocks.reverse.take(5)
+all_blocks = $dumb_db.all_local_blocks.reverse.take(50)
 # all_blocks = $dumb_db.all_local_blocks.each_slice(5).map(&:last)
 
 puts "Analyzing #{all_blocks.size} blocks."
@@ -48,3 +50,4 @@ keys = %i(fee_per_byte mempool_bytes confirmation_time_scaled)
 
 save_output(output, output_file, keys)
 preview_output(output_file)
+prepare_nn_files(output_file)

@@ -2,6 +2,8 @@
 
 require './src/all'
 
+# Collects blocks/txes/mempool data and stores it locally for analysis
+
 $dumb_db = DumbDB.new
 # $btc = BTC.new('http://kek:kek@172.18.0.2:8332/')
 # $btc.getmempoolinfo

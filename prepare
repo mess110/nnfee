@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+docker-compose run collector ruby analyze.rb "$@"
+mv ./collector/fee_*.csv ./estimator/csv/

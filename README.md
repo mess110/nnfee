@@ -12,10 +12,23 @@ Attempt to estimate bitcoin fees with neural networks
 
 Easiest way to run this is with docker:
 
-```
+```shell
+// start collecting blocks
 docker-compose up --build
-./estimate  --predict '[2.63,9.66]'
+
+// once you have blocks you can prepare for training
+// this will create training/testing files
+./prepare
+
+// train the NN
+./guestimate --train true'
+
+// make prediction. the first element in the array is the fee per byte the other
+// is the current mempool size
+./guestimate --predict '[2.63,9.66]'
 ```
+
+
 
 ## thanks
 

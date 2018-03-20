@@ -101,3 +101,39 @@ def save_output output, path, keys
     end
   end
 end
+
+def prepare_nn_files(input_path)
+  output_training = 'fee_training.csv'
+  output_test = 'fee_test.csv'
+  divider = 10 # 1 in 10 will be added to the test data
+
+  unless File.exists? input_path
+    puts "File #{input_path} does not exist"
+    exit 1
+  end
+
+  first_line = open(input_path).gets
+
+  open(input_path) do |csv|
+    open(output_training, 'w') do |training|
+      training.puts first_line
+
+      open(output_test, 'w') do |test|
+        test.puts first_line
+
+        index = 0
+        csv.each_line do |line|
+          next if line == first_line
+          index += 1
+          (index % divider == 0 ? test : training).puts line
+        end
+      end
+    end
+  end
+
+  puts "\n#{output_training}"
+  preview_output output_training
+
+  puts "\n#{output_test}"
+  preview_output output_test
+end
