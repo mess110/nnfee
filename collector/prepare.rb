@@ -4,6 +4,7 @@
 
 require './src/all'
 
+time = Time.now
 $dumb_db = DumbDB.new
 $mempool = Mempool.new
 
@@ -51,3 +52,4 @@ keys = %i(fee_per_byte mempool_bytes confirmation_time_scaled)
 save_output(output, output_file, keys)
 preview_output(output_file)
 prepare_nn_files(output_file)
+puts "Total time preparing: #{(Time.now - time).round(2)} seconds"
