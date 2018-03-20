@@ -1,25 +1,12 @@
 #!/usr/bin/env ruby
 
-require 'fileutils'
-require 'json'
-
-require './src/BTC'
-require './src/utils'
-require './src/dumb_db'
-require './src/mempool'
+require './src/all'
 
 $dumb_db = DumbDB.new
 # $btc = BTC.new('http://kek:kek@172.18.0.2:8332/')
 # $btc.getmempoolinfo
 
 # block_index = $btc.getblockcount
-
-help = 'Valid commands: blocks, mempool, missing_blocks, stats'
-
-if ARGV.size != 1
-  puts help
-  exit 1
-end
 
 case ARGV[0]
 when 'blocks'
@@ -41,9 +28,7 @@ when 'missing_blocks'
       p missing_blocks
     end
   end
-when 'stats'
-  # do nothing
-  puts 'Done'
 else
-  puts help
+  puts 'Valid commands: blocks, mempool, missing_blocks'
+  exit 1 if ARGV.size != 1
 end

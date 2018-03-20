@@ -1,3 +1,5 @@
+# Responsible for downloading and selecting the closest mempool state at a
+# certain given time
 class Mempool
   attr_accessor :mempool
 

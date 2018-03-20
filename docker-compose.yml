@@ -15,15 +15,15 @@ services:
     depends_on:
       - collector
 
-  api:
-    build: api/
-    command: flask run -h 0.0.0.0
-    environment:
-      - FLASK_APP=app.py
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./api:/myapp
-      - ./estimator:/estimator
-    depends_on:
-      - estimator
+  # api:
+    # build: api/
+    # command: flask run -h 0.0.0.0
+    # environment:
+      # - FLASK_APP=app.py
+    # ports:
+      # - "5000:5000"
+    # volumes:
+      # - ./api:/myapp
+      # - ./estimator:/estimator
+    # depends_on:
+      # - estimator

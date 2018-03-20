@@ -1,5 +1,7 @@
 require 'zlib'
 
+# Responsbile for storing the blockchain on disk
+# Blocks are compressed using zlib and decompressed on the fly
 class DumbDB
   attr_accessor :dumb_path, :dumb_data_path, :dumb_index_path
 
