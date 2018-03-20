@@ -67,11 +67,11 @@ end
 # When gathering data, we might get 50 of a type and only 2 of another type.
 # This methods discards elements of a certain type when there are more than
 # a certain treshold
-def max_number_of_elements_of_type output, total_time_slices
+def max_number_of_elements_of_type output, total_time_slices, max = 500
   key = :confirmation_time_scaled
   new_output = []
   (total_time_slices - 1).downto(0) do |i|
-    new_output.concat(output.select { |e| e if e[key] == i }.take(500))
+    new_output.concat(output.select { |e| e if e[key] == i }.take(max))
   end
   new_output
 end

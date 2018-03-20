@@ -8,7 +8,7 @@ $dumb_db = DumbDB.new
 $mempool = Mempool.new
 
 # all_blocks = $dumb_db.all_local_blocks
-all_blocks = $dumb_db.all_local_blocks.reverse.take(50)
+all_blocks = $dumb_db.all_local_blocks.reverse.take(500)
 # all_blocks = $dumb_db.all_local_blocks.each_slice(5).map(&:last)
 
 puts "Preparing from #{all_blocks.size} blocks."
@@ -43,7 +43,7 @@ total_time_slices = 8
 
 normalize_time_slice!(output, total_time_slices)
 
-output = max_number_of_elements_of_type(output, total_time_slices)
+output = max_number_of_elements_of_type(output, total_time_slices, 1000)
 
 output_file = 'out.csv'
 keys = %i(fee_per_byte mempool_bytes confirmation_time_scaled)
