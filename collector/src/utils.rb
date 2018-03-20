@@ -81,8 +81,13 @@ end
 def preview_output path
   puts `head #{path}`
 
-  a = File.read(path).lines.collect { |l| l.split(',').last.strip }.sort
-  p Hash[a.group_by {|x| x}.map {|k,v| [k,v.count]}]
+  last_columns = []
+  open(path) do |csv|
+    csv.each_line do |line|
+      last_columns.push(line.split(',').last.strip)
+    end
+  end
+  p Hash[last_columns.sort.group_by {|x| x}.map {|k,v| [k,v.count]}]
 end
 
 # Saves the output as a csv file including keys
