@@ -4,10 +4,11 @@ from fee_classifier import FeeClassifier
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--predict', default='', type=str, help='predict something')
-parser.add_argument('--train', default=False, type=bool, help='do training')
-parser.add_argument('--evaluate', default=False, type=bool, help='do evaluation')
+parser.add_argument('--train', default=False, help='do training', action='store_true')
+parser.add_argument('--evaluate', default=False, help='do evaluation', action='store_true')
 parser.add_argument('--batch_size', default=100, type=int, help='batch size')
 parser.add_argument('--train_steps', default=1000, type=int, help='number of training steps')
+
 def main(argv):
     args = parser.parse_args(argv[1:])
 

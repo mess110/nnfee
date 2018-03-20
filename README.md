@@ -27,7 +27,7 @@ docker-compose up --build
 
 // train the NN
 
-./guestimate --train true'
+./guestimate --train'
 
 
 // make prediction. the first element in the array is the fee per byte the other
