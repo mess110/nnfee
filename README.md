@@ -22,7 +22,6 @@ docker-compose up --build
 // this will create training/testing files and move them in the
 // correct directory
 
-
 ./prepare
 
 
