@@ -1,2 +1,2 @@
 #!/usr/bin/env sh
-docker-compose run estimator python main.py "$@"
+docker-compose run estimator python cli.py "$@"

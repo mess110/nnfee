@@ -18,11 +18,11 @@ your model.
 To train it:
 
 ```
-python main.py --train
+python cli.py --train
 ```
 
 To predict using the model:
 
 ```
-python main.py --predict '[2.63,9.66]'
+python cli.py --predict '[2.63,9.66]'
 ```
