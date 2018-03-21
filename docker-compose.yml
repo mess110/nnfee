@@ -39,6 +39,6 @@ services:
       - "5000:5000"
     volumes:
       - ./estimator:/myapp
-      - ./data/estimator:/data
+      - ./data/estimator:/data:ro
     depends_on:
       - collector
