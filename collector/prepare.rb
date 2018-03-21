@@ -17,7 +17,7 @@ puts "Preparing from #{all_blocks.size} blocks."
 output = []
 while !all_blocks.empty?
   newest_block_id = all_blocks.pop
-  block = block_stats $dumb_db.dumb_read newest_block_id
+  block = block_stats $dumb_db.read newest_block_id
 
   # flatten the data
   block['transactions'].each do |e|

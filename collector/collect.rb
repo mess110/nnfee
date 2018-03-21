@@ -12,8 +12,8 @@ $dumb_db = DumbDB.new
 
 case ARGV[0]
 when 'blocks'
-  block_index = $dumb_db.dumb_oldest_block_index
-  $dumb_db.dumb_fetch_chain block_index
+  block_index = $dumb_db.oldest_block_index
+  $dumb_db.fetch_chain block_index
 when 'mempool'
   $mempool = Mempool.new
   puts 'Done'
