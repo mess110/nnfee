@@ -6,7 +6,7 @@ services:
     command: ruby collect.rb blocks
     environment:
       - DATA_PATH=/data
-      - MEMPOOL_JS_PATH=/data/3m.js
+      - MEMPOOL_RAW_PATH=/data/mempool.log
       - MEMPOOL_JSON_PATH=/data/3m.json
       - PREPARE_OUTPUT_FILE=/data/out.csv
     volumes:
@@ -38,7 +38,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ./estimator:/myapp
+      - ./estimator:/myapp:ro
       - ./data/estimator:/data:ro
     depends_on:
       - collector

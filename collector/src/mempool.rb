@@ -4,17 +4,17 @@ class Mempool
   attr_accessor :mempool
 
   def initialize
-    mempool_3m_js = ENV['MEMPOOL_JS_PATH'] || 'db/3m.js'
+    mempool_raw_path = ENV['MEMPOOL_RAW_PATH'] || 'db/3m.js'
     mempool_3m = ENV['MEMPOOL_JSON_PATH'] || 'db/3m.json'
 
-    unless File.exists?(mempool_3m_js)
+    unless File.exists?(mempool_raw_path)
       puts 'Downloading mempool'
-      `curl https://dedi.jochen-hoenicke.de/queue/3m.js > #{mempool_3m_js}`
+      `curl https://dedi.jochen-hoenicke.de/queue/mempool.log > #{mempool_raw_path}`
     end
 
     unless File.exists?(mempool_3m)
       puts 'Saving mempool'
-      lines = File.read(mempool_3m_js).split("\n")
+      lines = File.read(mempool_raw_path).split("\n")
       lines.pop
       lines.reverse!
       lines.pop
