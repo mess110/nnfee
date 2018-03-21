@@ -2,8 +2,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import estimate_data
+from classifier import estimate_data
 import tensorflow as tf
+
 
 class FeeClassifier:
     MODELS_DIR = 'models/'
@@ -25,31 +26,29 @@ class FeeClassifier:
         self.classifier = tf.estimator.DNNClassifier(
             feature_columns=my_feature_columns,
             # Two hidden layers of 10 nodes each.
-            hidden_units=[10, 10],
+            hidden_units=[10, 10, 10, 10],
             # The model must choose between 3 classes.
             n_classes=8,
             model_dir=FeeClassifier.MODELS_DIR)
-
 
     def train(self):
         train_x, train_y = estimate_data.load_training_data()
 
         # Train the Model.
         self.classifier.train(
-            input_fn=lambda:estimate_data.train_input_fn(train_x, train_y, self.batch_size),
+            input_fn=lambda: estimate_data.train_input_fn(train_x, train_y,
+                                                          self.batch_size),
             steps=self.train_steps)
-
 
     def evaluate(self):
         test_x, test_y = estimate_data.load_test_data()
 
         # Evaluate the model.
         eval_result = self.classifier.evaluate(
-            input_fn=lambda:estimate_data.eval_input_fn(test_x, test_y,
-                                                    self.batch_size))
+            input_fn=lambda: estimate_data.eval_input_fn(test_x, test_y,
+                                                         self.batch_size))
 
         print('Test set accuracy: {accuracy:0.3f}\n'.format(**eval_result))
-
 
     def predict(self, predict, expected):
         predict_x = {}
@@ -64,10 +63,11 @@ class FeeClassifier:
             predict_x[key] = new_array
         # print(predict_x)
 
-        predictions = self.classifier.predict(
-            input_fn=lambda:estimate_data.eval_input_fn(predict_x,
-                                                    labels=None,
-                                                    batch_size=self.batch_size))
+        def input_fn():
+            return estimate_data.eval_input_fn(predict_x, labels=None,
+                                               batch_size=self.batch_size)
+
+        predictions = self.classifier.predict(input_fn=input_fn)
 
         template = ('Prediction is "{}" ({:.1f}%), expected "{}"\n')
 

@@ -1,16 +1,22 @@
 import argparse
 import tensorflow as tf
 
-from fee_classifier import FeeClassifier
+from classifier import FeeClassifier
 from shutil import rmtree
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--predict', default='', type=str, help='predict something')
-parser.add_argument('--train', default=False, help='do training', action='store_true')
-parser.add_argument('--evaluate', default=False, help='do evaluation', action='store_true')
-parser.add_argument('--clean', default=False, help='delete the existing model', action='store_true')
+parser.add_argument('--predict', default='', type=str,
+                    help='predict something')
+parser.add_argument('--train', default=False, action='store_true',
+                    help='do training')
+parser.add_argument('--evaluate', default=False, action='store_true',
+                    help='do evaluation')
+parser.add_argument('--clean', default=False, action='store_true',
+                    help='delete the existing model')
 parser.add_argument('--batch_size', default=100, type=int, help='batch size')
-parser.add_argument('--train_steps', default=1000, type=int, help='number of training steps')
+parser.add_argument('--train_steps', default=1000, type=int,
+                    help='number of training steps')
+
 
 def main(argv):
     args = parser.parse_args(argv[1:])
@@ -31,8 +37,8 @@ def main(argv):
         predictorz = [
             [2.63, 9.66217041],
             [4.29, 18.03693676],
-            [2.67,9.66217041],
-            [1.18,18.03693676]
+            [2.67, 9.66217041],
+            [1.18, 18.03693676]
         ]
     else:
         input_list = eval(args.predict)
@@ -44,6 +50,7 @@ def main(argv):
         expected = ['?']
 
     classifier.predict(predictorz, expected)
+
 
 if __name__ == '__main__':
     # tf.logging.set_verbosity(tf.logging.INFO)
