@@ -3,5 +3,5 @@ require 'json'
 
 require './src/BTC'
 require './src/utils'
-require './src/dumb_db'
+require './src/db'
 require './src/mempool'

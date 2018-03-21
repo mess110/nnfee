@@ -4,7 +4,7 @@ require './src/all'
 
 # Collects blocks/txes/mempool data and stores it locally for analysis
 
-$dumb_db = DumbDB.new
+$db = DB.new
 # $btc = BTC.new('http://kek:kek@172.18.0.2:8332/')
 # $btc.getmempoolinfo
 
@@ -12,13 +12,13 @@ $dumb_db = DumbDB.new
 
 case ARGV[0]
 when 'blocks'
-  block_index = $dumb_db.oldest_block_index
-  $dumb_db.fetch_chain block_index
+  block_index = $db.oldest_block_index
+  $db.fetch_chain block_index
 when 'mempool'
   $mempool = Mempool.new
   puts 'Done'
 when 'missing_blocks'
-  blockz = $dumb_db.all_local_blocks
+  blockz = $db.all_local_blocks
   if blockz.empty?
     puts 'You have no blocks'
   else

@@ -2,10 +2,10 @@ require 'zlib'
 
 # Responsbile for storing the blockchain on disk
 # Blocks are compressed using zlib and decompressed on the fly
-class DumbDB
+class DB
   attr_accessor :db_path, :data_path
 
-  def initialize(db_path = 'dumb_db')
+  def initialize(db_path = 'db')
     @db_path = ENV['DATA_PATH'] || db_path
     @data_path = File.join(@db_path, 'data')
     validate

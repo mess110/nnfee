@@ -5,19 +5,19 @@
 require './src/all'
 
 time = Time.now
-$dumb_db = DumbDB.new
+$db = DB.new
 $mempool = Mempool.new
 
-# all_blocks = $dumb_db.all_local_blocks
-all_blocks = $dumb_db.all_local_blocks.reverse.take(5)
-# all_blocks = $dumb_db.all_local_blocks.each_slice(5).map(&:last)
+# all_blocks = $db.all_local_blocks
+all_blocks = $db.all_local_blocks.reverse.take(5)
+# all_blocks = $db.all_local_blocks.each_slice(5).map(&:last)
 
 puts "Preparing from #{all_blocks.size} blocks."
 
 output = []
 while !all_blocks.empty?
   newest_block_id = all_blocks.pop
-  block = block_stats $dumb_db.read newest_block_id
+  block = block_stats $db.read newest_block_id
 
   # flatten the data
   block['transactions'].each do |e|

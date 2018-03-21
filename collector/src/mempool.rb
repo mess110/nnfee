@@ -4,8 +4,8 @@ class Mempool
   attr_accessor :mempool
 
   def initialize
-    mempool_3m_js = ENV['MEMPOOL_JS_PATH'] || 'dumb_db/3m.js'
-    mempool_3m = ENV['MEMPOOL_JSON_PATH'] || 'dumb_db/3m.json'
+    mempool_3m_js = ENV['MEMPOOL_JS_PATH'] || 'db/3m.js'
+    mempool_3m = ENV['MEMPOOL_JSON_PATH'] || 'db/3m.json'
 
     unless File.exists?(mempool_3m_js)
       puts 'Downloading mempool'

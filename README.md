@@ -4,13 +4,14 @@ Attempt to estimate bitcoin fees with neural networks
 
 ## components
 
-* [api](api/) - web api for predictions
 * [collector](collector/) - prepares data for training/testing
-* [estimator](estimator/) - trains/tests
+* [estimator](estimator/) - trains/tests/clients
 
 ## usage
 
 Easiest way to run this is with docker:
+
+Open [http://localhost:5000/](http://localhost:5000/) for the web interface
 
 ```shell
 // start collecting blocks
