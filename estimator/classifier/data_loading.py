@@ -1,10 +1,13 @@
 import pandas as pd
 import tensorflow as tf
 
+CSV_TRAINING_PATH = 'data/csv/fee_training.csv'
+CSV_TEST_PATH = 'data/csv/fee_test.csv'
+
 
 def load_data(test=True):
     """Returns the iris dataset as train_x, train_y"""
-    csv_path = 'csv/fee_test.csv' if test is True else 'csv/fee_training.csv'
+    csv_path = CSV_TEST_PATH if test is True else CSV_TRAINING_PATH
     csv = pd.read_csv(csv_path)
     y_name = list(csv.columns.values).pop()
     csv_x, csv_y = csv, csv.pop(y_name)
@@ -21,7 +24,7 @@ def load_training_data():
 
 def load_train_keys():
     """Reads the headers of the csv_file"""
-    path = 'csv/fee_test.csv'
+    path = CSV_TEST_PATH
     csv = pd.read_csv(path, nrows=1)
     y_name = list(csv.columns.values).pop()
     csv.pop(y_name)

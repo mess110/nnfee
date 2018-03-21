@@ -2,12 +2,12 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from classifier import estimate_data
+from classifier import data_loading
 import tensorflow as tf
 
 
 class FeeClassifier:
-    MODELS_DIR = 'models/'
+    MODELS_DIR = 'data/models/'
 
     def __init__(self, batch_size, train_steps):
         self.batch_size = batch_size
@@ -15,7 +15,7 @@ class FeeClassifier:
         self.feature_column_names = []
 
         my_feature_columns = []
-        for key in estimate_data.load_train_keys():
+        for key in data_loading.load_train_keys():
             feature_column = tf.feature_column.numeric_column(key=key)
             my_feature_columns.append(feature_column)
             self.feature_column_names.append(feature_column.name)
@@ -32,20 +32,20 @@ class FeeClassifier:
             model_dir=FeeClassifier.MODELS_DIR)
 
     def train(self):
-        train_x, train_y = estimate_data.load_training_data()
+        train_x, train_y = data_loading.load_training_data()
 
         # Train the Model.
         self.classifier.train(
-            input_fn=lambda: estimate_data.train_input_fn(train_x, train_y,
+            input_fn=lambda: data_loading.train_input_fn(train_x, train_y,
                                                           self.batch_size),
             steps=self.train_steps)
 
     def evaluate(self):
-        test_x, test_y = estimate_data.load_test_data()
+        test_x, test_y = data_loading.load_test_data()
 
         # Evaluate the model.
         eval_result = self.classifier.evaluate(
-            input_fn=lambda: estimate_data.eval_input_fn(test_x, test_y,
+            input_fn=lambda: data_loading.eval_input_fn(test_x, test_y,
                                                          self.batch_size))
 
         print('Test set accuracy: {accuracy:0.3f}\n'.format(**eval_result))
@@ -63,8 +63,9 @@ class FeeClassifier:
             predict_x[key] = new_array
         # print(predict_x)
 
+        # TODO: is this good?
         def input_fn():
-            return estimate_data.eval_input_fn(predict_x, labels=None,
+            return data_loading.eval_input_fn(predict_x, labels=None,
                                                batch_size=self.batch_size)
 
         predictions = self.classifier.predict(input_fn=input_fn)
