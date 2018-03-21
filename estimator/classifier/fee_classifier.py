@@ -2,12 +2,14 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import os
+
 from classifier import data_loading
 import tensorflow as tf
 
 
 class FeeClassifier:
-    MODELS_DIR = 'data/models/'
+    MODELS_DIR = os.getenv('MODELS_DIR', 'data/models/')
     BATCH_SIZE = 100
     TRAIN_STEPS = 1000
 

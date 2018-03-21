@@ -1,8 +1,9 @@
+import os
 import pandas as pd
 import tensorflow as tf
 
-CSV_TRAINING_PATH = 'data/csv/fee_training.csv'
-CSV_TEST_PATH = 'data/csv/fee_test.csv'
+CSV_TRAINING_PATH = os.getenv('CSV_TRAINING_PATH', 'data/csv/fee_training.csv')
+CSV_TEST_PATH = os.getenv('CSV_TEST_PATH', 'data/csv/fee_test.csv')
 
 
 def load_data(test=True):
