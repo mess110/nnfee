@@ -13,8 +13,8 @@ parser.add_argument('--evaluate', default=False, action='store_true',
                     help='do evaluation')
 parser.add_argument('--clean', default=False, action='store_true',
                     help='delete the existing model')
-parser.add_argument('--batch_size', default=100, type=int, help='batch size')
-parser.add_argument('--train_steps', default=1000, type=int,
+parser.add_argument('--batch_size', default=FeeClassifier.BATCH_SIZE, type=int, help='batch size')
+parser.add_argument('--train_steps', default=FeeClassifier.TRAIN_STEPS, type=int,
                     help='number of training steps')
 
 

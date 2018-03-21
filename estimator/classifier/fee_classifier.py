@@ -8,10 +8,13 @@ import tensorflow as tf
 
 class FeeClassifier:
     MODELS_DIR = 'data/models/'
+    BATCH_SIZE = 100
+    TRAIN_STEPS = 1000
 
-    def __init__(self, batch_size, train_steps):
+    def __init__(self, batch_size=BATCH_SIZE, train_steps=TRAIN_STEPS):
         self.batch_size = batch_size
         self.train_steps = train_steps
+        print(self.batch_size)
         self.feature_column_names = []
 
         my_feature_columns = []
@@ -20,7 +23,7 @@ class FeeClassifier:
             my_feature_columns.append(feature_column)
             self.feature_column_names.append(feature_column.name)
 
-        print(FeeClassifier.MODELS_DIR)
+        print(self.MODELS_DIR)
 
         # Build 2 hidden layer DNN with 10, 10 units respectively.
         self.classifier = tf.estimator.DNNClassifier(
@@ -72,8 +75,14 @@ class FeeClassifier:
 
         template = ('Prediction is "{}" ({:.1f}%), expected "{}"\n')
 
+        output = []
+        i = 0
         for pred_dict, expec in zip(predictions, expected):
             class_id = pred_dict['class_ids'][0]
             probability = pred_dict['probabilities'][class_id]
 
             print(template.format(class_id, 100 * probability, expec))
+            output.append({ 'fee_per_byte': predict[i][0], 'mempool_size': predict[i][1], 'prediction': class_id.item(), 'confidence': (100 * probability).item() })
+            i += 1
+
+        return output
