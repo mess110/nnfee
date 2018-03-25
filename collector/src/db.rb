@@ -22,7 +22,7 @@ class DB
     gzs = Dir["#{data_path}/*.gz"]
     cmd_output = `du -h #{db_path}`
     log "\n#{cmd_output}"
-    log "#{obj_type} count: #{gzs.size}"
+    log " count: #{gzs.size}"
   end
 
   def validate
@@ -66,16 +66,6 @@ class DB
     end
     log "Estimated time to read #{result.size} blocks: #{(result.size * 0.2 / 60).round(0)} minutes"
     result
-  end
-
-  def fetch_chain block_index
-    block_index = 514132 if block_index.nil?
-    while block_index > 1
-      block_index -= 1
-      log "Reading #{block_index}"
-      data = read(block_index)
-      log "Block time: #{data['time']} - #{Time.at(data['time'])}"
-    end
   end
 
   def block_path block_index
@@ -122,11 +112,11 @@ class DB
     end
   end
 
-  private
-
   def log s
     puts "#{obj_type}: #{s}"
   end
+
+  private
 
   def _write block_index, data
     file_path = File.join(data_path, "#{block_index}.gz")
@@ -159,7 +149,7 @@ class SlimDB < DB
   def validate
     mkdirs
     gzs = Dir["#{data_path}/*.gz"]
-    log "#{obj_type} count: #{gzs.size}"
+    log " count: #{gzs.size}"
   end
 
   def read_from_api block_index

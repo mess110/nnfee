@@ -13,13 +13,10 @@ require './src/all'
 case ARGV[0]
 when 'blocks'
   block_index = $db.oldest_block_index
-  $db.fetch_chain block_index
-when 'mempool'
-  $mempool = Mempool.new
-  puts 'Done'
+  fetch_chain $db, block_index
 when 'missing_blocks'
   $db.find_missing_blocks
 else
-  puts 'Valid commands: blocks, mempool, missing_blocks'
+  puts 'Valid commands: blocks, missing_blocks'
   exit 1 if ARGV.size != 1
 end

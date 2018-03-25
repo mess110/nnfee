@@ -4,8 +4,8 @@
 
 require './src/all'
 
-from = '2018-02-03'
-to = '2018-03-01'
+from = '2018-02-03' # min: 2017-03-01
+to = '2018-03-01'   # max: 2018-03-01
 
 time = Time.now
 
@@ -17,8 +17,7 @@ output = []
 while !all_blocks.empty?
   newest_block_id = all_blocks.pop
   puts '-' * 80
-  # puts "#{newest_block_id} " + '-' * (80 - newest_block_id.to_s.length + 1)
-  ze_block = $processed_db.read newest_block_id
+  ze_block = $slim_db.read newest_block_id
   output.concat(ze_block['transactions'])
 end
 output.shuffle!
@@ -34,7 +33,7 @@ normalize_time_slice!(output, total_time_slices)
 output = max_number_of_elements_of_type(output, total_time_slices, 1000)
 
 output_file = ENV['PREPARE_OUTPUT_FILE'] || 'out.csv'
-keys = %i(fee_per_byte mempool_megabytes mempool_tx_count confirmation_time_scaled)
+keys = %i(fee_per_byte mempool_megabytes mempool_tx_count time_slice)
 
 save_output(output, output_file, keys)
 preview_output(output_file)

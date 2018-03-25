@@ -45,11 +45,11 @@ class Mempool
   end
 
   def oldest_date
-    Time.at($mempool.mempool.keys.sort.first.to_i)
+    $mempool.mempool.keys.sort.first.to_i
   end
 
   def newest_date
-    Time.at($mempool.mempool.keys.sort.last.to_i)
+    $mempool.mempool.keys.sort.last.to_i
   end
 
   def closest_mempool(subset, needed)

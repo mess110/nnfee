@@ -49,8 +49,8 @@ end
 # For example, if our max time is 1h, with 6 total_time_slices, the output
 # would be put in 6 categories: 0m-10m, 10m-20m, etc
 def normalize_time_slice! output, total_time_slices
-  old_key = 'confirmation_time'
-  new_key = 'confirmation_time_scaled'
+  old_key = 'seconds_to_confirm'
+  new_key = 'time_slice'
 
   max_time = output.collect { |e| e[old_key] }.max
 
@@ -68,7 +68,7 @@ end
 # This methods discards elements of a certain type when there are more than
 # a certain treshold
 def max_number_of_elements_of_type output, total_time_slices, max = 500
-  key = 'confirmation_time_scaled'
+  key = 'time_slice'
   new_output = []
   (total_time_slices - 1).downto(0) do |i|
     new_output.concat(output.select { |e| e if e[key] == i }.take(max))
@@ -154,7 +154,7 @@ def raw_read_with_mempool db, mempool, block_id
     fee_per_byte = tx['fee_int'].to_f / tx['size'].to_f
     mempool_tx_count = closest['count']
     mempool_megabytes = closest['size'].to_f / 1024.to_f / 1024.to_f
-    confirmation_time =  (Time.at(block['first_seen']) - Time.at(tx['first_seen']))
+    seconds_to_confirm = (Time.at(block['first_seen']) - Time.at(tx['first_seen'])).to_i
 
     transactions.push({
       'txid' => tx['txid'],
@@ -167,7 +167,7 @@ def raw_read_with_mempool db, mempool, block_id
       'fee_per_byte' => fee_per_byte.to_f.round(2),
       'mempool_megabytes' => mempool_megabytes.to_f.round(8),
       'mempool_tx_count' => mempool_tx_count,
-      'confirmation_time' => confirmation_time
+      'seconds_to_confirm' => seconds_to_confirm
     })
   end
   puts "Flatten #{block_id} took #{(Time.now - flattening).round(2)} seconds"
@@ -178,4 +178,21 @@ def raw_read_with_mempool db, mempool, block_id
     'first_seen' => block['first_seen'],
     'transactions' => transactions
   }
+end
+
+def fetch_chain db, block_index
+  block_index = 511422 if block_index.nil?
+  db.log "Fetching from #{block_index}"
+  end_time = Date.parse('2017-03-01').to_time.to_i
+  while block_index > 1
+    block_index -= 1
+    db.log "Reading #{block_index}"
+    data = db.read(block_index)
+    db.log "Block time: #{data['time']} - #{Time.at(data['time'])}"
+    if data['time'] < end_time
+      db.log "Reached end of mempool data: #{end_time} #{Time.at(end_time)}"
+      db.log "Stopped fetching"
+      break
+    end
+  end
 end

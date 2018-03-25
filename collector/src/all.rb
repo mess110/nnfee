@@ -8,7 +8,20 @@ require './src/db'
 require './src/index'
 require './src/mempool'
 
+puts 'Staring collector'
+
+def debugger_help
+  puts "\n" * 2
+
+  puts <<-EOS
+  Welcome to the collector debugger.
+
+  $db, $mempool, $slim_db
+
+  EOS
+end
+
 $db = DB.new
 $mempool = Mempool.new
-$processed_db = SlimDB.new(nil, 'slim')
-$processed_db.set($db, $mempool)
+$slim_db = SlimDB.new(nil, 'slim')
+$slim_db.set($db, $mempool)
