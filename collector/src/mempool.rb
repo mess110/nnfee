@@ -4,44 +4,71 @@ class Mempool
   attr_accessor :mempool
 
   def initialize
-    mempool_raw_path = ENV['MEMPOOL_RAW_PATH'] || 'db/3m.js'
-    mempool_3m = ENV['MEMPOOL_JSON_PATH'] || 'db/3m.json'
+    mempool_raw_path = ENV['MEMPOOL_RAW_PATH'] || 'db/mempool.log'
+    mempool_json_path = ENV['MEMPOOL_JSON_PATH'] || 'db/mempool.json'
 
     unless File.exists?(mempool_raw_path)
       puts 'Downloading mempool'
       `curl https://dedi.jochen-hoenicke.de/queue/mempool.log > #{mempool_raw_path}`
     end
 
-    unless File.exists?(mempool_3m)
-      puts 'Saving mempool'
-      lines = File.read(mempool_raw_path).split("\n")
-      lines.pop
-      lines.reverse!
-      lines.pop
-      lines.reverse!
-      json = JSON.parse("[#{lines.join('')[0...-1]}]")
-      File.write(mempool_3m, json.to_json)
-    end
+    time = Time.now
+    puts 'Reading mempool'
+    unless File.exists?(mempool_json_path)
+      @mempool = {}
+      open(mempool_raw_path) do |pool|
+        pool.each_line do |line|
+          a = eval(line.strip[0...-1])
 
-    json = _read_mempool(mempool_3m)
-    @mempool = json
+          processed = process(a)
+          if processed[:count] != 0 && processed[:pending_fee] != 0 && processed[:size] != 0
+            @mempool[a[0]] = processed
+          end
+        end
+      end
+
+      File.write(mempool_json_path, @mempool.to_json)
+    else
+      @mempool = JSON.parse(File.read(mempool_json_path))
+    end
+    puts "Done reading mempool #{(Time.now - time).round(2)} seconds"
   end
 
-  # Example usage:
-  #
-  # closest_mempool(1521207597)
-  def closest_mempool(needed)
-    @mempool
+  # Returns only mempool areas which include the min and max of first seen
+  # in block
+  def subset_for transactions
+    first_seens = transactions.collect { |tx| tx['first_seen'] }
+    extra = 60
+    min = (first_seens.min || 0) - extra
+    max = (first_seens.max || 0) + extra
+    $mempool.mempool.select { |k,v| k.to_i.between?(min, max) }
+  end
+
+  def oldest_date
+    Time.at($mempool.mempool.keys.sort.first.to_i)
+  end
+
+  def newest_date
+    Time.at($mempool.mempool.keys.sort.last.to_i)
+  end
+
+  def closest_mempool(subset, needed)
+    needed_key = needed.to_i
+    key = subset
       .keys
-      .sort_by { |date| (Time.at(date).to_i - Time.at(needed).to_i).abs }
+      .sort_by { |date| (date.to_i - needed_key).abs }
       .first
+    @mempool[key]
   end
 
   private
 
-  def _read_mempool path
-    JSON.parse(File.read(path))
-      .collect { |e| { e[0] => { time: e[0], count: e[1].inject(:+), pending_fee: e[2].inject(:+), size: e[3].inject(:+) } } }
-      .reduce Hash.new, :merge
+  def process a
+    {
+      'time' => a[0],
+      'count' => a[1].inject(:+),
+      'pending_fee' => a[2].inject(:+),
+      'size' => a[3].inject(:+),
+    }
   end
 end

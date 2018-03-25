@@ -5,9 +5,9 @@ services:
     build: collector/
     command: ruby collect.rb blocks
     environment:
-      - DATA_PATH=/data
+      - DB_PATH=/data
       - MEMPOOL_RAW_PATH=/data/mempool.log
-      - MEMPOOL_JSON_PATH=/data/3m.json
+      - MEMPOOL_JSON_PATH=/data/mempool.json
       - PREPARE_OUTPUT_FILE=/data/out.csv
     volumes:
       - ./collector:/myapp
@@ -26,19 +26,19 @@ services:
     depends_on:
       - collector
 
-  api:
-    build: estimator/
-    command: flask run -h 0.0.0.0
-    environment:
-      - CSV_TRAINING_PATH=/data/csv/fee_training.csv
-      - CSV_TEST_PATH=/data/csv/fee_test.csv
-      - MODELS_DIR=/data/models
-      - FLASK_APP=web.py
-      - FLASK_DEBUG=1
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./estimator:/myapp:ro
-      - ./data/estimator:/data:ro
-    depends_on:
-      - collector
+  # api:
+    # build: estimator/
+    # command: flask run -h 0.0.0.0
+    # environment:
+      # - CSV_TRAINING_PATH=/data/csv/fee_training.csv
+      # - CSV_TEST_PATH=/data/csv/fee_test.csv
+      # - MODELS_DIR=/data/models
+      # - FLASK_APP=web.py
+      # - FLASK_DEBUG=1
+    # ports:
+      # - "5000:5000"
+    # volumes:
+      # - ./estimator:/myapp:ro
+      # - ./data/estimator:/data:ro
+    # depends_on:
+      # - collector

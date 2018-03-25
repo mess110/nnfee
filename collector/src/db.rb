@@ -3,35 +3,78 @@ require 'zlib'
 # Responsbile for storing the blockchain on disk
 # Blocks are compressed using zlib and decompressed on the fly
 class DB
-  attr_accessor :db_path, :data_path
+  attr_accessor :db_path, :data_path, :time_index, :obj_type
 
-  def initialize(db_path = 'db')
-    @db_path = ENV['DATA_PATH'] || db_path
-    @data_path = File.join(@db_path, 'data')
+  def initialize(db_path = nil, obj_type = 'data')
+    @db_path = ENV['DB_PATH'] || data_path || 'db'
+    @obj_type = obj_type
+    @data_path = File.join(@db_path, @obj_type)
+    @time_index = Index.new(@db_path, "#{obj_type}_time".to_sym)
+
     validate
   end
 
-  def validate
+  def mkdirs
     FileUtils.mkdir_p data_path
-
-    gzs = Dir["#{data_path}/*.gz"]
-    puts `du -h #{db_path}`
-    puts "#{gzs.size} blocks"
-    # gzs.each do |s|
-    # end
   end
 
-  def all_local_blocks
-    Dir["#{data_path}/*gz"].collect { |e| e.split('/').last.split('.').first.to_i }.sort
+  def view_stats
+    gzs = Dir["#{data_path}/*.gz"]
+    cmd_output = `du -h #{db_path}`
+    log "\n#{cmd_output}"
+    log "#{obj_type} count: #{gzs.size}"
+  end
+
+  def validate
+    log 'Validating'
+    mkdirs
+    view_stats
+
+    index_time = Time.now
+    log 'Adding missing indexes'
+    i = 0
+    (all_local_blocks - @time_index.indexed_keys).each do |missing|
+      i += 1
+      read missing
+      if i % 1000 == 0
+        @time_index.commit
+      end
+    end
+    @time_index.commit
+    log "Done adding missing indexes #{(Time.now - index_time).round(0)} seconds"
+    log 'Done validating'
+  end
+
+  def all_local_blocks from=nil, to=nil
+    result = []
+    all_blocks = Dir["#{data_path}/*gz"].collect { |e| e.split('/').last.split('.').first.to_i }.sort
+    if from.nil? && to.nil?
+      # return raw block indexes from disk
+      result = all_blocks
+    else
+      # using the time index, only return blocks between the two dates
+      throw 'from or to date nil' if from.nil? || to.nil?
+      from_date = Date.parse(from)
+      to_date = Date.parse(to)
+      to_return = []
+      all_blocks.each do |block_id|
+        if Time.at(@time_index.data[block_id.to_s].to_i).to_date.between?(from_date, to_date)
+          to_return.push block_id.to_i
+        end
+      end
+      result = to_return.sort
+    end
+    log "Estimated time to read #{result.size} blocks: #{(result.size * 0.2 / 60).round(0)} minutes"
+    result
   end
 
   def fetch_chain block_index
     block_index = 514132 if block_index.nil?
     while block_index > 1
       block_index -= 1
-      puts "Reading #{block_index}"
+      log "Reading #{block_index}"
       data = read(block_index)
-      puts "Block time: #{data['time']} - #{Time.at(data['time'])}"
+      log "Block time: #{data['time']} - #{Time.at(data['time'])}"
     end
   end
 
@@ -51,14 +94,39 @@ class DB
       file_path = block_path(block_index)
       data = _read_gzip(file_path)
     else
-      data = block_api(block_index)
+      data = read_from_api(block_index)
       _write(block_index, data)
     end
-    puts "Reading #{block_index} took #{(Time.now - time).to_f.round(2)} seconds"
+    @time_index.add block_index, data['time']
+
+    log "Reading #{block_index} took #{(Time.now - time).to_f.round(2)} seconds"
     data
   end
 
+  def read_from_api block_index
+    block_api block_index
+  end
+
+  def find_missing_blocks
+    blockz = all_local_blocks
+    if blockz.empty?
+      log 'You have no blocks'
+    else
+      missing_blocks = blockz - (blockz.first..blockz.last).to_a
+      if missing_blocks.empty?
+        log 'No missing blocks'
+      else
+        log 'Missing blocks:'
+        p missing_blocks
+      end
+    end
+  end
+
   private
+
+  def log s
+    puts "#{obj_type}: #{s}"
+  end
 
   def _write block_index, data
     file_path = File.join(data_path, "#{block_index}.gz")
@@ -67,7 +135,7 @@ class DB
       gzip << data.to_json
       gzip.close
     end
-    puts "Wrote block #{block_index} with time #{Time.at(data['time'])}"
+    log "Wrote block #{block_index} with time #{Time.at(data['time'])}"
   end
 
   def _read_gzip file_path
@@ -77,5 +145,24 @@ class DB
   def _have? block_index
     file_path = block_path(block_index)
     File.exists?(file_path) && !File.zero?(file_path)
+  end
+end
+
+class SlimDB < DB
+  attr_accessor :db, :mempool
+
+  def set db, mempool
+    @db = db
+    @mempool = mempool
+  end
+
+  def validate
+    mkdirs
+    gzs = Dir["#{data_path}/*.gz"]
+    log "#{obj_type} count: #{gzs.size}"
+  end
+
+  def read_from_api block_index
+    raw_read_with_mempool @db, @mempool, block_index
   end
 end
