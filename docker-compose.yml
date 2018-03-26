@@ -3,7 +3,8 @@ services:
 
   collector:
     build: collector/
-    command: ruby collect.rb blocks
+    # command: ruby collect.rb blocks
+    command: ruby --version
     environment:
       - DB_PATH=/data
       - MEMPOOL_RAW_PATH=/data/mempool.log

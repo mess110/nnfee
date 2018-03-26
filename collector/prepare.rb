@@ -4,14 +4,12 @@
 
 require './src/all'
 
-from = '2018-02-03' # min: 2017-03-01
-to = '2018-03-01'   # max: 2018-03-01
+from = '2018-02-24' # min: 2017-03-01
+to = '2018-02-24'   # max: 2018-03-01
 
 time = Time.now
 
-all_blocks = $db.all_local_blocks(from, to)
-# all_blocks = $db.all_local_blocks.reverse.take(5)
-# all_blocks = $db.all_local_blocks.each_slice(5).map(&:last)
+all_blocks = $slim_db.all_local_blocks(from, to)
 
 output = []
 while !all_blocks.empty?

@@ -14,9 +14,7 @@ Easiest way to run this is with docker:
 Open [http://localhost:5000/](http://localhost:5000/) for the web interface
 
 ```shell
-// start collecting blocks
-
-docker-compose up --build
+./collect
 
 
 // once you have blocks you can prepare for training

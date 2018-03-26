@@ -8,12 +8,12 @@ class Mempool
     mempool_json_path = ENV['MEMPOOL_JSON_PATH'] || 'db/mempool.json'
 
     unless File.exists?(mempool_raw_path)
-      puts 'Downloading mempool'
+      log 'Downloading mempool'
       `curl https://dedi.jochen-hoenicke.de/queue/mempool.log > #{mempool_raw_path}`
     end
 
     time = Time.now
-    puts 'Reading mempool'
+    log 'Reading mempool'
     unless File.exists?(mempool_json_path)
       @mempool = {}
       open(mempool_raw_path) do |pool|
@@ -31,7 +31,7 @@ class Mempool
     else
       @mempool = JSON.parse(File.read(mempool_json_path))
     end
-    puts "Done reading mempool #{(Time.now - time).round(2)} seconds"
+    log "Done reading mempool #{(Time.now - time).round(2)} seconds"
   end
 
   # Returns only mempool areas which include the min and max of first seen
@@ -59,6 +59,10 @@ class Mempool
       .sort_by { |date| (date.to_i - needed_key).abs }
       .first
     @mempool[key]
+  end
+
+  def log s
+    puts "pool: #{s}"
   end
 
   private

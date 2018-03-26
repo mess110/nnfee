@@ -37,6 +37,10 @@ class Index
       end
     end
     @added = false
-    puts 'Commited'
+    log 'Commited'
+  end
+
+  def log s
+    puts "indx: #{s}"
   end
 end

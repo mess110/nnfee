@@ -9,7 +9,7 @@ def block_api block_index
   next_page = "https://api.smartbit.com.au/v1/blockchain/block/#{block_index}?limit=1000"
   loop do
     break if next_page.nil?
-    puts "Req #{next_page}"
+    puts "curl: #{next_page}"
     out = `curl -sS '#{next_page}'`
     json = JSON.parse(out.strip)
     next_page = json['block']['transaction_paging']['next_link']
@@ -170,7 +170,7 @@ def raw_read_with_mempool db, mempool, block_id
       'seconds_to_confirm' => seconds_to_confirm
     })
   end
-  puts "Flatten #{block_id} took #{(Time.now - flattening).round(2)} seconds"
+  db.log "Flatten #{block_id} took #{(Time.now - flattening).round(2)} seconds"
 
   {
     'height' => block_id,
@@ -186,9 +186,9 @@ def fetch_chain db, block_index
   end_time = Date.parse('2017-03-01').to_time.to_i
   while block_index > 1
     block_index -= 1
-    db.log "Reading #{block_index}"
     data = db.read(block_index)
-    db.log "Block time: #{data['time']} - #{Time.at(data['time'])}"
+    puts '-' * 80
+    # db.log "Block time: #{data['time']} - #{Time.at(data['time'])}"
     if data['time'] < end_time
       db.log "Reached end of mempool data: #{end_time} #{Time.at(end_time)}"
       db.log "Stopped fetching"

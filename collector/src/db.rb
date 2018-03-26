@@ -29,20 +29,6 @@ class DB
     log 'Validating'
     mkdirs
     view_stats
-
-    index_time = Time.now
-    log 'Adding missing indexes'
-    i = 0
-    (all_local_blocks - @time_index.indexed_keys).each do |missing|
-      i += 1
-      read missing
-      if i % 1000 == 0
-        @time_index.commit
-      end
-    end
-    @time_index.commit
-    log "Done adding missing indexes #{(Time.now - index_time).round(0)} seconds"
-    log 'Done validating'
   end
 
   def all_local_blocks from=nil, to=nil
@@ -89,7 +75,7 @@ class DB
     end
     @time_index.add block_index, data['time']
 
-    log "Reading #{block_index} took #{(Time.now - time).to_f.round(2)} seconds"
+    log "Reading #{block_index} (#{Time.at(data['time'])}) took #{(Time.now - time).to_f.round(2)} seconds"
     data
   end
 
@@ -147,9 +133,21 @@ class SlimDB < DB
   end
 
   def validate
-    mkdirs
-    gzs = Dir["#{data_path}/*.gz"]
-    log " count: #{gzs.size}"
+    super
+
+    index_time = Time.now
+    log 'Adding missing indexes'
+    i = 0
+    (all_local_blocks - @time_index.indexed_keys).each do |missing|
+      i += 1
+      read missing
+      if i % 1000 == 0
+        @time_index.commit
+      end
+    end
+    @time_index.commit
+    log "Done adding missing indexes #{(Time.now - index_time).round(0)} seconds"
+    log 'Done validating'
   end
 
   def read_from_api block_index
