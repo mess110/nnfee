@@ -10,6 +10,7 @@ def root():
 @app.route("/nn")
 @app.route("/nn/<int:fee_per_byte>")
 @app.route("/nn/<int:fee_per_byte>/<int:mempool_size>")
-def predict(fee_per_byte=1, mempool_size=10):
-    output = FeeClassifier().predict([[fee_per_byte, mempool_size]], ['?'])
+@app.route("/nn/<int:fee_per_byte>/<int:mempool_size>/<int:mempool_tx_count>")
+def predict(fee_per_byte=1, mempool_size=10, mempool_tx_count=10):
+    output = FeeClassifier().predict([[fee_per_byte, mempool_size, mempool_tx_count]], ['?'])
     return jsonify({ 'result': output[0] })

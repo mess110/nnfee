@@ -1,31 +1,39 @@
 version: '3'
 services:
 
+  harmony:
+    build: collector/
+    command: ruby harmony.rb
+    volumes:
+      - ./data/collector:/data:ro
+
   collector:
     build: collector/
-    # command: ruby collect.rb blocks
-    command: ruby --version
+    command: ruby collect.rb
     environment:
       - DB_PATH=/data
       - MEMPOOL_RAW_PATH=/data/mempool.log
       - MEMPOOL_JSON_PATH=/data/mempool.json
       - PREPARE_OUTPUT_FILE=/data/out.csv
+      - NO_VALIDATION=true
     volumes:
       - ./collector:/myapp
       - ./data/collector:/data
-
-  estimator:
-    build: estimator/
-    command: python --version
-    environment:
-      - CSV_TRAINING_PATH=/data/csv/fee_training.csv
-      - CSV_TEST_PATH=/data/csv/fee_test.csv
-      - MODELS_DIR=/data/models
-    volumes:
-      - ./estimator:/myapp
-      - ./data/estimator:/data
     depends_on:
-      - collector
+      - harmony
+
+  # estimator:
+    # build: estimator/
+    # command: python --version
+    # environment:
+      # - CSV_TRAINING_PATH=/data/csv/fee_training.csv
+      # - CSV_TEST_PATH=/data/csv/fee_test.csv
+      # - MODELS_DIR=/data/models
+    # volumes:
+      # - ./estimator:/myapp
+      # - ./data/estimator:/data
+    # depends_on:
+      # - collector
 
   # api:
     # build: estimator/

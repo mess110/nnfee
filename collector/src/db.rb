@@ -135,18 +135,21 @@ class SlimDB < DB
   def validate
     super
 
-    index_time = Time.now
-    log 'Adding missing indexes'
-    i = 0
-    (all_local_blocks - @time_index.indexed_keys).each do |missing|
-      i += 1
-      read missing
-      if i % 1000 == 0
-        @time_index.commit
+    if ENV['NO_VALIDATION'].nil?
+      index_time = Time.now
+      log 'Adding missing indexes'
+      i = 0
+      (all_local_blocks - @time_index.indexed_keys).each do |missing|
+        i += 1
+        read missing
+        if i % 1000 == 0
+          @time_index.commit
+        end
       end
+      @time_index.commit
+      log "Done adding missing indexes #{(Time.now - index_time).round(0)} seconds"
     end
-    @time_index.commit
-    log "Done adding missing indexes #{(Time.now - index_time).round(0)} seconds"
+
     log 'Done validating'
   end
 

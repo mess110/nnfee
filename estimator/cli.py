@@ -49,7 +49,7 @@ def main(argv):
         predictorz = [input_list]
         expected = ['?']
 
-    classifier.predict(predictorz, expected)
+    # classifier.predict(predictorz, expected)
 
 
 if __name__ == '__main__':

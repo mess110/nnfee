@@ -180,19 +180,11 @@ def raw_read_with_mempool db, mempool, block_id
   }
 end
 
-def fetch_chain db, block_index
-  block_index = 511422 if block_index.nil?
-  db.log "Fetching from #{block_index}"
-  end_time = Date.parse('2017-03-01').to_time.to_i
-  while block_index > 1
-    block_index -= 1
-    data = db.read(block_index)
-    puts '-' * 80
-    # db.log "Block time: #{data['time']} - #{Time.at(data['time'])}"
-    if data['time'] < end_time
-      db.log "Reached end of mempool data: #{end_time} #{Time.at(end_time)}"
-      db.log "Stopped fetching"
-      break
-    end
-  end
+def json_get url
+  url = URI.parse(url)
+  req = Net::HTTP::Get.new(url.to_s)
+  res = Net::HTTP.start(url.host, url.port) {|http|
+    http.request(req)
+  }
+  JSON.parse(res.body)
 end

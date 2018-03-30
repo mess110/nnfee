@@ -4,8 +4,8 @@
 
 require './src/all'
 
-from = '2018-02-24' # min: 2017-03-01
-to = '2018-02-24'   # max: 2018-03-01
+from = '2017-12-29' # min: 2017-03-01
+to   = '2018-02-28' # max: 2018-03-01
 
 time = Time.now
 
@@ -24,11 +24,11 @@ if output.empty?
   exit 1
 end
 
-total_time_slices = 8
+total_time_slices = 10
 
 normalize_time_slice!(output, total_time_slices)
 
-output = max_number_of_elements_of_type(output, total_time_slices, 1000)
+# output = max_number_of_elements_of_type(output, total_time_slices, 1000)
 
 output_file = ENV['PREPARE_OUTPUT_FILE'] || 'out.csv'
 keys = %i(fee_per_byte mempool_megabytes mempool_tx_count time_slice)

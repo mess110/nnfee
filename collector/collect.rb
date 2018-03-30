@@ -1,9 +1,15 @@
 #!/usr/bin/env ruby
 
-require './src/all'
-
 # Collects blocks/txes/mempool data and stores it locally for analysis
 
-block_index = $db.oldest_block_index
-block_index = nil
-fetch_chain $slim_db, block_index
+require './src/all'
+
+loop do
+  json = json_get('http://nnfee_harmony_1:5678/')
+  puts json
+  $slim_db.read json['last_block_index']
+  if json['last_block_index'] <= 2
+    puts 'all blocks downloaded'
+    break
+  end
+end

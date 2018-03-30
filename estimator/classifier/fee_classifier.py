@@ -16,7 +16,7 @@ class FeeClassifier:
     def __init__(self, batch_size=BATCH_SIZE, train_steps=TRAIN_STEPS):
         self.batch_size = batch_size
         self.train_steps = train_steps
-        print(self.batch_size)
+        # print(self.batch_size)
         self.feature_column_names = []
 
         my_feature_columns = []
@@ -25,15 +25,15 @@ class FeeClassifier:
             my_feature_columns.append(feature_column)
             self.feature_column_names.append(feature_column.name)
 
-        print(self.MODELS_DIR)
+        # print(self.MODELS_DIR)
 
         # Build 2 hidden layer DNN with 10, 10 units respectively.
         self.classifier = tf.estimator.DNNClassifier(
             feature_columns=my_feature_columns,
             # Two hidden layers of 10 nodes each.
-            hidden_units=[10, 10, 10, 10],
+            hidden_units=[100, 100],
             # The model must choose between 3 classes.
-            n_classes=8,
+            n_classes=10,
             model_dir=FeeClassifier.MODELS_DIR)
 
     def train(self):
@@ -84,7 +84,7 @@ class FeeClassifier:
             probability = pred_dict['probabilities'][class_id]
 
             print(template.format(class_id, 100 * probability, expec))
-            output.append({ 'fee_per_byte': predict[i][0], 'mempool_size': predict[i][1], 'prediction': class_id.item(), 'confidence': (100 * probability).item() })
+            output.append({ 'fee_per_byte': predict[i][0], 'mempool_megabytes': predict[i][1], 'mempool_tx_count': predict[i][2], 'prediction': class_id.item(), 'confidence': (100 * probability).item() })
             i += 1
 
         return output

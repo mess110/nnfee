@@ -1,6 +1,7 @@
+require 'date'
 require 'fileutils'
 require 'json'
-require 'date'
+require 'net/http'
 
 require './src/BTC'
 require './src/utils'
