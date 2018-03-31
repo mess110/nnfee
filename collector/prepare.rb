@@ -4,7 +4,7 @@
 
 require './src/all'
 
-from = '2017-12-29' # min: 2017-03-01
+from = '2018-02-01' # min: 2017-03-01
 to   = '2018-02-28' # max: 2018-03-01
 
 time = Time.now

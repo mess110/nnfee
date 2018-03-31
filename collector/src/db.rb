@@ -88,7 +88,7 @@ class DB
     if blockz.empty?
       log 'You have no blocks'
     else
-      missing_blocks = blockz - (blockz.first..blockz.last).to_a
+      missing_blocks = (blockz.first..blockz.last).to_a - blockz
       if missing_blocks.empty?
         log 'No missing blocks'
       else
