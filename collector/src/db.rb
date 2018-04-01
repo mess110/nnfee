@@ -32,8 +32,12 @@ class DB
     data
   end
 
+  def random_tx
+    read(all_local_blocks.shuffle.first)['transactions'].shuffle.first
+  end
+
   def read_from_api block_index
-    block_api block_index
+    API.block_api block_index
   end
 
   def log s

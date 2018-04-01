@@ -5,10 +5,10 @@
 require './src/all'
 
 loop do
-  json = json_get('http://nnfee_harmony_1:5678/')
-  puts json
-  $slim_db.read json['last_block_index']
-  if json['last_block_index'] <= 2
+  last_block_index = API.next_block
+  puts "api : Last block index: #{last_block_index}"
+  $slim_db.read last_block_index
+  if last_block_index <= 2
     puts 'all blocks downloaded'
     break
   end

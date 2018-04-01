@@ -3,35 +3,6 @@ def block block_index
   $btc.getblock block_hash
 end
 
-# Recursively gathers data about a block from the API
-def block_api block_index
-  all = []
-  next_page = "https://api.smartbit.com.au/v1/blockchain/block/#{block_index}?limit=1000"
-  loop do
-    break if next_page.nil?
-    puts "curl: #{next_page}"
-    out = `curl -sS '#{next_page}'`
-    json = JSON.parse(out.strip)
-    next_page = json['block']['transaction_paging']['next_link']
-    all.push json
-  end
-
-  original = nil
-  while !all.empty?
-    original = all.pop if original.nil?
-    next if all.empty?
-    json = all.pop
-    original['block']['transactions'].concat(json['block']['transactions'])
-  end
-
-  unless original.nil?
-    original = original['block']
-    original.delete('transaction_paging')
-  end
-
-  original
-end
-
 def block_stats b
   transaction_keys = %w(txid hash time first_seen double_spend size vsize input_amount_int output_amount_int fee_int coinbase)
   block_keys = %w(height hash size stripped_size time first_seen difficulty input_count output_count input_amount_int output_amount_int fees_int transaction_count transactions)
@@ -178,13 +149,4 @@ def raw_read_with_mempool db, mempool, block_id
     'first_seen' => block['first_seen'],
     'transactions' => transactions
   }
-end
-
-def json_get url
-  url = URI.parse(url)
-  req = Net::HTTP::Get.new(url.to_s)
-  res = Net::HTTP.start(url.host, url.port) {|http|
-    http.request(req)
-  }
-  JSON.parse(res.body)
 end

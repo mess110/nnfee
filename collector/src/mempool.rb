@@ -9,7 +9,7 @@ class Mempool
 
     unless File.exists?(mempool_raw_path)
       log 'Downloading mempool'
-      `curl https://dedi.jochen-hoenicke.de/queue/mempool.log > #{mempool_raw_path}`
+      API.save_mempool_to mempool_raw_path
     end
 
     time = Time.now

@@ -7,7 +7,8 @@ require './src/modules/missing_blocks'
 require './src/modules/validation'
 require './src/modules/navigation'
 
-require './src/BTC'
+require './src/api'
+require './src/btc'
 require './src/utils'
 require './src/db'
 require './src/index'
@@ -22,6 +23,10 @@ def debugger_help
   Welcome to the collector debugger.
 
   $db, $mempool, $slim_db
+
+  $slim_db.validate_index
+  $slim_db.fetch_missing 467000
+  $slim_db.random_tx
 
   EOS
 end
