@@ -3,6 +3,10 @@ require 'fileutils'
 require 'json'
 require 'net/http'
 
+require './src/modules/missing_blocks'
+require './src/modules/validation'
+require './src/modules/navigation'
+
 require './src/BTC'
 require './src/utils'
 require './src/db'
