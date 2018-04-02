@@ -75,6 +75,11 @@ def raw_read_with_mempool db, mempool, block_id
   block['transactions'].each do |tx|
     closest = mempool.closest_mempool(subset, tx['first_seen'])
 
+    if closest.nil?
+      puts "Could not find mempool for #{tx['first_seen']} (#{tx['txid']})"
+      next
+    end
+
     fee_per_byte = tx['fee_int'].to_f / tx['size'].to_f
     mempool_tx_count = closest['count']
     mempool_megabytes = closest['size'].to_f / 1024.to_f / 1024.to_f
@@ -102,4 +107,32 @@ def raw_read_with_mempool db, mempool, block_id
     'first_seen' => block['first_seen'],
     'transactions' => transactions
   }
+end
+
+def write_tx f, tx, keys
+  sub_hash = tx.select { |k,v| keys.include?(k.to_sym) }
+  line = sub_hash.values.join(',')
+  throw 'missing data' if sub_hash.values.size != keys.size
+  f.write "#{line}\n"
+end
+
+def add_confirmation_speed tx
+  if tx['seconds_to_confirm'] <= 60 * 15    # 15 minutes
+    amount = 0
+  elsif tx['seconds_to_confirm'] <= 60 * 30 # 30 minutes
+    amount = 1
+  elsif tx['seconds_to_confirm'] <= 60 * 60 * 1  # 1 hour
+    amount = 2
+  elsif tx['seconds_to_confirm'] <= 60 * 60 * 4  # 4 hours
+    amount = 3
+  elsif tx['seconds_to_confirm'] <= 60 * 60 * 12 # 12 hours
+    amount = 4
+  elsif tx['seconds_to_confirm'] <= 60 * 60 * 24 * 1 # 1 day
+    amount = 5
+  elsif tx['seconds_to_confirm'] <= 60 * 60 * 24 * 3 # 3 days
+    amount = 6
+  else
+    amount = 7
+  end
+  tx['confirmation_speed'] = amount
 end
