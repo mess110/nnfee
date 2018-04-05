@@ -32,6 +32,7 @@ services:
     # volumes:
       # - ./estimator:/myapp
       # - ./data/estimator:/data
+      # - ./data/collector/out/:/train:ro
     # depends_on:
       # - collector
 

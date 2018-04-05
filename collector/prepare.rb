@@ -10,7 +10,10 @@ output_dir = '/data/out'
 FileUtils.mkdir_p output_dir
 
 keys = %i(fee_per_byte mempool_megabytes mempool_tx_count confirmation_speed)
-periods = ['2018-02']
+periods = ['2017-03']
+# periods = ['2018-02', '2018-01', '2017-12', '2017-11']
+# periods = ['2017-10', '2017-09', '2017-08', '2017-07']
+# periods = ['2017-06', '2017-05', '2017-04', '2017-03']
 
 periods.each do |period|
   puts "Preparing #{period}"
