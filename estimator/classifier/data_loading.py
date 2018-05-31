@@ -2,30 +2,25 @@ import os
 import pandas as pd
 import tensorflow as tf
 
-CSV_TRAINING_PATH = os.getenv('CSV_TRAINING_PATH', 'data/csv/fee_training.csv')
-CSV_TEST_PATH = os.getenv('CSV_TEST_PATH', 'data/csv/fee_test.csv')
 
-
-def load_data(test=True):
+def load_data(csv_path):
     """Returns the iris dataset as train_x, train_y"""
-    csv_path = CSV_TEST_PATH if test is True else CSV_TRAINING_PATH
     csv = pd.read_csv(csv_path)
     y_name = list(csv.columns.values).pop()
     csv_x, csv_y = csv, csv.pop(y_name)
     return csv_x, csv_y
 
 
-def load_test_data():
-    return load_data(True)
+def load_test_data(path):
+    return load_data(path)
 
 
-def load_training_data():
-    return load_data(False)
+def load_training_data(path):
+    return load_data(path)
 
 
-def load_train_keys():
+def load_train_keys(path):
     """Reads the headers of the csv_file"""
-    path = CSV_TEST_PATH
     csv = pd.read_csv(path, nrows=1)
     y_name = list(csv.columns.values).pop()
     csv.pop(y_name)

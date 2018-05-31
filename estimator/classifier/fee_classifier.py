@@ -19,8 +19,11 @@ class FeeClassifier:
         # print(self.batch_size)
         self.feature_column_names = []
 
+        self.train_path = '/train/201802_training.csv'
+        self.test_path = '/train/201802_test.csv'
+
         my_feature_columns = []
-        for key in data_loading.load_train_keys():
+        for key in data_loading.load_train_keys(self.test_path):
             feature_column = tf.feature_column.numeric_column(key=key)
             my_feature_columns.append(feature_column)
             self.feature_column_names.append(feature_column.name)
@@ -33,11 +36,11 @@ class FeeClassifier:
             # Two hidden layers of 10 nodes each.
             hidden_units=[100, 100],
             # The model must choose between 3 classes.
-            n_classes=10,
+            n_classes=8,
             model_dir=FeeClassifier.MODELS_DIR)
 
     def train(self):
-        train_x, train_y = data_loading.load_training_data()
+        train_x, train_y = data_loading.load_training_data(self.train_path)
 
         # Train the Model.
         self.classifier.train(
@@ -46,7 +49,7 @@ class FeeClassifier:
             steps=self.train_steps)
 
     def evaluate(self):
-        test_x, test_y = data_loading.load_test_data()
+        test_x, test_y = data_loading.load_test_data(self.test_path)
 
         # Evaluate the model.
         eval_result = self.classifier.evaluate(
