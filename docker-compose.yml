@@ -1,11 +1,19 @@
 version: '3'
 services:
 
+  # Used to distribute block ids to make sure workers don't work
+  # on the same block
+
   # harmony:
     # build: collector/
     # command: ruby harmony.rb
     # volumes:
       # - ./data/collector:/data:ro
+
+
+
+
+  # Collects mempool and transaction data
 
   # collector:
     # build: collector/
@@ -22,6 +30,11 @@ services:
     # depends_on:
       # - harmony
 
+
+
+
+  # Handles cli estimation
+
   estimator:
     build: estimator/
     command: python --version
@@ -33,6 +46,11 @@ services:
       - ./data/collector/out/:/train:ro
     # depends_on:
       # - collector
+
+
+
+
+  # Example usage of the estimator as an API
 
   api:
     build: estimator/
