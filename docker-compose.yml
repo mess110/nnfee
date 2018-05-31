@@ -1,54 +1,51 @@
 version: '3'
 services:
 
-  harmony:
-    build: collector/
-    command: ruby harmony.rb
-    volumes:
-      - ./data/collector:/data:ro
-
-  collector:
-    build: collector/
-    command: ruby collect.rb
-    environment:
-      - DB_PATH=/data
-      - MEMPOOL_RAW_PATH=/data/mempool.log
-      - MEMPOOL_JSON_PATH=/data/mempool.json
-      - PREPARE_OUTPUT_FILE=/data/out.csv
-      - NO_VALIDATION=true
-    volumes:
-      - ./collector:/myapp
-      - ./data/collector:/data
-    depends_on:
-      - harmony
-
-  # estimator:
-    # build: estimator/
-    # command: python --version
-    # environment:
-      # - CSV_TRAINING_PATH=/data/csv/fee_training.csv
-      # - CSV_TEST_PATH=/data/csv/fee_test.csv
-      # - MODELS_DIR=/data/models
+  # harmony:
+    # build: collector/
+    # command: ruby harmony.rb
     # volumes:
-      # - ./estimator:/myapp
-      # - ./data/estimator:/data
-      # - ./data/collector/out/:/train:ro
+      # - ./data/collector:/data:ro
+
+  # collector:
+    # build: collector/
+    # command: ruby collect.rb
+    # environment:
+      # - DB_PATH=/data
+      # - MEMPOOL_RAW_PATH=/data/mempool.log
+      # - MEMPOOL_JSON_PATH=/data/mempool.json
+      # - PREPARE_OUTPUT_FILE=/data/out.csv
+      # - NO_VALIDATION=true
+    # volumes:
+      # - ./collector:/myapp
+      # - ./data/collector:/data
+    # depends_on:
+      # - harmony
+
+  estimator:
+    build: estimator/
+    command: python --version
+    environment:
+      - MODELS_DIR=/data/models
+    volumes:
+      - ./estimator:/myapp
+      - ./data/estimator:/data
+      - ./data/collector/out/:/train:ro
     # depends_on:
       # - collector
 
-  # api:
-    # build: estimator/
-    # command: flask run -h 0.0.0.0
-    # environment:
-      # - CSV_TRAINING_PATH=/data/csv/fee_training.csv
-      # - CSV_TEST_PATH=/data/csv/fee_test.csv
-      # - MODELS_DIR=/data/models
-      # - FLASK_APP=web.py
-      # - FLASK_DEBUG=1
-    # ports:
-      # - "5000:5000"
-    # volumes:
-      # - ./estimator:/myapp:ro
-      # - ./data/estimator:/data:ro
+  api:
+    build: estimator/
+    command: flask run -h 0.0.0.0
+    environment:
+      - MODELS_DIR=/data/models
+      - FLASK_APP=web.py
+      - FLASK_DEBUG=1
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./estimator:/myapp:ro
+      - ./data/estimator:/data:ro
+      - ./data/collector/out/:/train:ro
     # depends_on:
       # - collector
